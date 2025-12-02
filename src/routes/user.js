@@ -35,7 +35,7 @@ router.get("/me", auth, async (req, res, next) => {
 
 const updateSchema = z.object({
   name: z.string().min(1).optional(),
-  geminiApiKey: z.string().optional(),
+  geminiApiKey: z.string().nullable().optional(),
 });
 
 router.put("/update", auth, async (req, res, next) => {
