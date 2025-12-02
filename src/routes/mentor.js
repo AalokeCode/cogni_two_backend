@@ -10,7 +10,7 @@ const prisma = new PrismaClient();
 
 const chatSchema = z.object({
   message: z.string().min(1, "Message is required"),
-  conversationId: z.string().optional(),
+  conversationId: z.string().nullable().optional(),
 });
 
 router.post("/chat", auth, async (req, res, next) => {
