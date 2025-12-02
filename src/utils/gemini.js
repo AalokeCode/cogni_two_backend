@@ -87,4 +87,34 @@ The correctAnswer is the index (0-3) of the correct option.`;
   return JSON.parse(jsonMatch[0]);
 };
 
-module.exports = { getGeminiClient, generateCurriculum, generateQuiz };
+const chatWithMentor = async (
+  message,
+  conversationHistory = [],
+  apiKey = null
+) => {
+  const model = getGeminiClient(apiKey);
+
+  let prompt = `You are an educational mentor AI assistant helping students learn. Be helpful, encouraging, and provide clear explanations.
+
+Current conversation:
+`;
+
+  conversationHistory.forEach((msg) => {
+    prompt += `${msg.role === "user" ? "Student" : "Mentor"}: ${msg.content}\n`;
+  });
+
+  prompt += `Student: ${message}\nMentor:`;
+
+  const result = await model.generateContent(prompt);
+  const response = await result.response;
+  const text = response.text();
+
+  return text.trim();
+};
+
+module.exports = {
+  getGeminiClient,
+  generateCurriculum,
+  generateQuiz,
+  chatWithMentor,
+};

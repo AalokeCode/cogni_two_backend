@@ -200,4 +200,41 @@ router.post("/submit", auth, async (req, res, next) => {
   }
 });
 
+router.delete("/", auth, async (req, res, next) => {
+  try {
+    const { curriculumId } = req.params;
+
+    const curriculum = await prisma.curriculum.findUnique({
+      where: { id: curriculumId },
+      select: { userId: true },
+    });
+
+    if (!curriculum) {
+      return error(res, "Curriculum not found", 404);
+    }
+
+    if (curriculum.userId !== req.user.userId) {
+      return error(res, "Access denied", 403);
+    }
+
+    const quiz = await prisma.quiz.findFirst({
+      where: { curriculumId },
+    });
+
+    if (!quiz) {
+      return error(res, "No quiz found for this curriculum", 404);
+    }
+
+    await prisma.quiz.delete({ where: { id: quiz.id } });
+
+    return success(
+      res,
+      null,
+      "Quiz deleted successfully. You can now generate a new one."
+    );
+  } catch (err) {
+    next(err);
+  }
+});
+
 module.exports = router;
