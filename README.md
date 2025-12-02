@@ -59,3 +59,14 @@ NOTE: @ is src/
 ### Mentor
 
 16. `/api/mentor/chat` - Chat with AI mentor, maintains conversation history (File path in `@/routes/mentor.js`)
+
+### Admin Routes
+
+17. `GET /api/admin/users` - List all users with search/filter/sort/pagination
+18. `GET /api/admin/users/:id` - Get specific user details
+19. `PUT /api/admin/users/:id/role` - Update user role
+20. `DELETE /api/admin/users/:id` - Delete user account
+21. `GET /api/admin/curriculum` - List all curricula with search/filter/sort/pagination
+22. `GET /api/admin/curriculum/:id` - View any curriculum details
+23. `DELETE /api/admin/curriculum/:id` - Delete any curriculum
+24. `GET /api/admin/stats` - Dashboard statistics (File path in `@/routes/admin.js`)
