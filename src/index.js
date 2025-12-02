@@ -5,6 +5,7 @@ require("dotenv").config();
 const authRoutes = require("./auth");
 const userRoutes = require("./routes/user");
 const adminRoutes = require("./routes/admin");
+const curriculumRoutes = require("./routes/curriculum");
 const errorHandler = require("./middleware/errorHandler");
 
 const app = express();
@@ -22,6 +23,7 @@ app.use((req, res, next) => {
 app.use("/auth", authRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/curriculum", curriculumRoutes);
 
 app.get("/", (req, res) => {
   res.json({ message: "cogni 2.0 API" });

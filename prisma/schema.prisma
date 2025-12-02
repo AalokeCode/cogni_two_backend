@@ -19,32 +19,11 @@ model User {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
-  quizResults   QuizResult[]
-  courses       Course[]
+  curricula     Curriculum[]
   conversations Conversation[]
 }
 
-model Quiz {
-  id        String   @id @default(cuid())
-  questions Json
-  createdAt DateTime @default(now())
-
-  results QuizResult[]
-}
-
-model QuizResult {
-  id            String   @id @default(cuid())
-  userId        String
-  quizId        String
-  answers       Json
-  learningStyle String
-  createdAt     DateTime @default(now())
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  quiz Quiz @relation(fields: [quizId], references: [id], onDelete: Cascade)
-}
-
-model Course {
+model Curriculum {
   id         String   @id @default(cuid())
   userId     String
   title      String
@@ -52,10 +31,34 @@ model Course {
   difficulty String
   depth      String
   modules    Json
+  progress   Json?
+  focusAreas Json?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  quizzes Quiz[]
+}
+
+model Quiz {
+  id           String   @id @default(cuid())
+  curriculumId String
+  questions    Json
+  createdAt    DateTime @default(now())
+
+  curriculum Curriculum   @relation(fields: [curriculumId], references: [id], onDelete: Cascade)
+  results    QuizResult[]
+}
+
+model QuizResult {
+  id         String   @id @default(cuid())
+  quizId     String
+  answers    Json
+  score      Float
+  weakTopics Json?
+  createdAt  DateTime @default(now())
+
+  quiz Quiz @relation(fields: [quizId], references: [id], onDelete: Cascade)
 }
 
 model Conversation {
