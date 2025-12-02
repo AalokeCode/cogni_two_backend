@@ -1,36 +1,52 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
 const { PrismaClient } = require("@prisma/client");
+const { z } = require("zod");
+const { success, error } = require("../utils/responses");
 
 const router = express.Router();
 const prisma = new PrismaClient();
 
-router.post("/", async (req, res) => {
+const registerSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  email: z.string().email("Invalid email address"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+});
+
+router.post("/", async (req, res, next) => {
   try {
-    const { displayName, email, password } = req.body;
+    const validated = registerSchema.parse(req.body);
 
-    if (!displayName || !email || !password) {
-      return res.status(400).json({
-        message: "Display name, email and password are required",
-      });
-    }
-
-    const existingUser = await prisma.user.findUnique({ where: { email } });
-
-    if (existingUser) {
-      return res.status(400).json({ message: "User already exists" });
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const user = await prisma.user.create({
-      data: { email, password: hashedPassword, name: displayName },
+    const existingUser = await prisma.user.findUnique({
+      where: { email: validated.email },
     });
 
-    res.json({ message: "User registered successfully", userId: user.id });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Internal server error" });
+    if (existingUser) {
+      return error(res, "User already exists", 400);
+    }
+
+    const hashedPassword = await bcrypt.hash(validated.password, 10);
+
+    const user = await prisma.user.create({
+      data: {
+        email: validated.email,
+        password: hashedPassword,
+        name: validated.name,
+        credits: parseInt(process.env.DEFAULT_CREDITS) || 100,
+      },
+    });
+
+    return success(
+      res,
+      { userId: user.id },
+      "User registered successfully",
+      201
+    );
+  } catch (err) {
+    if (err instanceof z.ZodError) {
+      return error(res, "Validation failed", 400, err.errors);
+    }
+    next(err);
   }
 });
 
