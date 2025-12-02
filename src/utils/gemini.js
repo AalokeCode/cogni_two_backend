@@ -52,7 +52,7 @@ Make the curriculum detailed and educational. Include 3-5 modules with 2-4 lesso
 const generateQuiz = async (curriculumData, apiKey = null) => {
   const model = getGeminiClient(apiKey);
 
-  const moduleTitles = curriculumData.modules.map(m => m.title).join(", ");
+  const moduleTitles = curriculumData.modules.map((m) => m.title).join(", ");
 
   const prompt = `Generate a quiz based on this curriculum:
 Title: ${curriculumData.title}

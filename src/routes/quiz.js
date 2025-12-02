@@ -42,7 +42,11 @@ router.post("/generate", auth, async (req, res, next) => {
     });
 
     if (user.credits < 20) {
-      return error(res, "Insufficient credits. Need 20 credits to generate quiz.", 400);
+      return error(
+        res,
+        "Insufficient credits. Need 20 credits to generate quiz.",
+        400
+      );
     }
 
     const quizData = await generateQuiz(curriculum, user.geminiApiKey);
@@ -172,14 +176,22 @@ router.post("/submit", auth, async (req, res, next) => {
       },
     });
 
-    return success(res, {
-      result,
-      score,
-      weakTopics: sortedWeakTopics,
-      recommendations: sortedWeakTopics.length > 0
-        ? `Focus on: ${sortedWeakTopics.slice(0, 3).map(t => t.topic).join(", ")}`
-        : "Great job! You've mastered this curriculum.",
-    }, "Quiz submitted successfully");
+    return success(
+      res,
+      {
+        result,
+        score,
+        weakTopics: sortedWeakTopics,
+        recommendations:
+          sortedWeakTopics.length > 0
+            ? `Focus on: ${sortedWeakTopics
+                .slice(0, 3)
+                .map((t) => t.topic)
+                .join(", ")}`
+            : "Great job! You've mastered this curriculum.",
+      },
+      "Quiz submitted successfully"
+    );
   } catch (err) {
     if (err instanceof z.ZodError) {
       return error(res, "Validation failed", 400, err.errors);
