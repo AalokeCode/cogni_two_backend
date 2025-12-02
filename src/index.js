@@ -3,6 +3,7 @@ const cors = require("cors");
 require("dotenv").config();
 
 const authRoutes = require("./auth");
+const errorHandler = require("./middleware/errorHandler");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -13,7 +14,6 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.path}`);
-  console.log("Body:", req.body);
   next();
 });
 
@@ -22,6 +22,8 @@ app.use("/auth", authRoutes);
 app.get("/", (req, res) => {
   res.json({ message: "cogni 2.0 API" });
 });
+
+app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -14,10 +8,62 @@ datasource db {
 }
 
 model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  password      String
+  name          String?
+  credits       Int      @default(100)
+  learningStyle String?
+  geminiApiKey  String?
+  role          String   @default("user")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  quizResults   QuizResult[]
+  courses       Course[]
+  conversations Conversation[]
+}
+
+model Quiz {
   id        String   @id @default(cuid())
-  email     String   @unique
-  name      String?
-  password  String
+  questions Json
+  createdAt DateTime @default(now())
+
+  results QuizResult[]
+}
+
+model QuizResult {
+  id            String   @id @default(cuid())
+  userId        String
+  quizId        String
+  answers       Json
+  learningStyle String
+  createdAt     DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  quiz Quiz @relation(fields: [quizId], references: [id], onDelete: Cascade)
+}
+
+model Course {
+  id         String   @id @default(cuid())
+  userId     String
+  title      String
+  topic      String
+  difficulty String
+  depth      String
+  modules    Json
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Conversation {
+  id        String   @id @default(cuid())
+  userId    String
+  messages  Json
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
