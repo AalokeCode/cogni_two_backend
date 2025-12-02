@@ -8,7 +8,7 @@ const getGeminiClient = (apiKey) => {
   }
 
   const genAI = new GoogleGenerativeAI(key);
-  return genAI.getGenerativeModel({ model: "gemini-pro" });
+  return genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 };
 
 const generateCurriculum = async (topic, difficulty, depth, apiKey = null) => {
