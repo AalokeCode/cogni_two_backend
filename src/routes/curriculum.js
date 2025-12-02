@@ -104,6 +104,7 @@ router.get("/", auth, async (req, res, next) => {
         topic: true,
         difficulty: true,
         depth: true,
+        modules: true,
         progress: true,
         focusAreas: true,
         createdAt: true,
@@ -152,6 +153,7 @@ router.get("/:id", auth, async (req, res, next) => {
 
 const updateCurriculumSchema = z.object({
   title: z.string().min(1).optional(),
+  progress: z.any().optional(),
 });
 
 router.put("/:id", auth, async (req, res, next) => {
