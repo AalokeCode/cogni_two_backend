@@ -4,9 +4,12 @@ const { z } = require("zod");
 const auth = require("../middleware/auth");
 const { success, error } = require("../utils/responses");
 const { generateCurriculum } = require("../utils/gemini");
+const quizRouter = require("./quiz");
 
 const router = express.Router();
 const prisma = new PrismaClient();
+
+router.use("/:curriculumId/quiz", quizRouter);
 
 const createCurriculumSchema = z.object({
   topic: z.string().min(1, "Topic is required"),
